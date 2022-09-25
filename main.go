@@ -8,9 +8,9 @@ import (
 	"sort"
 )
 
-func worker(ports, results chan int) {
+func worker(ports, results chan int, hostname string) {
 	for p := range ports {
-		address := fmt.Sprintf("127.0.0.1:%d", p)
+		address := fmt.Sprintf("%s:%d", hostname, p)
 		conn, err := net.Dial("tcp", address)
 		if err != nil {
 			results <- 0
@@ -25,7 +25,7 @@ func worker(ports, results chan int) {
 
 func main() {
 	// given host
-	host := os.Args[0]
+	host := os.Args[1]
 	if host == "" {
 		log.Fatal("no host provided")
 	}
@@ -37,10 +37,10 @@ func main() {
 
 	// spawning workers
 	for i := 0; i < cap(ports); i++ {
-		go worker(ports, results)
+		go worker(ports, results, host)
 	}
 
-	// asigning tasks to ports
+	// assigning tasks to ports
 	go func() {
 		for i := 1; i <= portLimit; i++ {
 			ports <- i
@@ -57,7 +57,7 @@ func main() {
 	close(ports)
 	close(results)
 
-	// displaying reslts
+	// displaying results
 	sort.Ints(openports)
 	for _, port := range openports {
 		fmt.Printf("port %d is open\n", port)

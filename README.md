@@ -5,5 +5,5 @@ Dead simple fast port scanner.
 ## Usage
 
 ```bash
-port-scanner "localhost"
+./bin/port-scanner_darwin_amd64 "localhost"
 ```
